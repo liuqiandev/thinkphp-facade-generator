@@ -14,14 +14,15 @@ use think\console\input\Option;
 use think\console\Output;
 use think\Exception;
 
-class AppFacade extends MessageAbstract
+class AppFacade extends Make
 {
     protected $type = "appFacade";
     protected $annotation = [];
     protected $className;
-    protected $importObject;
+    protected $importObject = [];
     protected $annotationStrCache;
     protected $facadeName;
+
     protected function configure()
     {
         parent::configure();
@@ -34,6 +35,10 @@ class AppFacade extends MessageAbstract
     {
         $this->className = $this->getClassName($input->getArgument('name'));
 
+        if(substr($this->className,0,1)==='\\'){
+            $this->className = ltrim($this->className,'\\');
+        };
+
         if($input->hasOption('self')){
             $pathname = $this->getPathName($this->className);
             $dirname = dirname($pathname).DIRECTORY_SEPARATOR.'facade';
@@ -41,8 +46,8 @@ class AppFacade extends MessageAbstract
             $dirname = app()->getAppPath().'common'.DIRECTORY_SEPARATOR.'facade';
         }
 
-
         $classNameArray = explode('\\',$this->className);
+
         $this->facadeName = array_pop($classNameArray);
 
         $pathname =$dirname.DIRECTORY_SEPARATOR.$this->facadeName.'.php';
@@ -51,7 +56,9 @@ class AppFacade extends MessageAbstract
             $output->writeln('<error>' . $this->type . ' already exists!</error>');
             return false;
         }
+
         $this->getClassAnnotation();
+
         if (!is_dir(dirname($pathname))) {
             mkdir(dirname($pathname), 0755, true);
         }
@@ -128,7 +135,7 @@ class AppFacade extends MessageAbstract
 
     protected function getAnnotationOfMethod(\ReflectionMethod $method):void
     {
-        if($method->isPublic()){
+        if($method->isPublic()&&$method->isConstructor()===false){
             $this->annotationStrCache =' * @method';
             $this->annotationStrCache .=' '.$this->getReturnType($method);
             $this->annotationStrCache .=' '.$method->getName();
