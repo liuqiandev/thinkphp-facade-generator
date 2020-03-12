@@ -1,0 +1,23 @@
+{
+    "name": "liuqiandev/thinkphp-facade-generator",
+    "description": "thinkphp-facade-generator for thinkphp 5.1.*",
+    "type": "think-extend",
+    "require": {
+        "topthink/framework": "5.1.*",
+        "topthink/think-installer": "^2.0",
+        "php": ">=7.1.0"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "liuqianDev",
+            "email": "310227477@qq.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "liuqiandev\\thinkphp_facade_generator\\": "src"
+        }
+    }
+}
