@@ -31,8 +31,7 @@ return [
 ```
 php think make:appFacade 指定类的完整命名空间
     //可选参数
-    --common //默认选项，Facade将生成在application/common/facade目录下
-    --self  //Facade将生成在指定类所在目录的/facade目录下（需要自己测试）
+    --path self 
 ```
 
 ### 注意事项
@@ -73,5 +72,106 @@ public function method():Class
 Issue，改不改看心情。
 
 6.0的等我开始用了再考虑。
+
+#### 使用实例
+
+如下的动态类：
+```
+<?php
+
+
+namespace app\common\service;
+
+
+class User
+{
+    /**
+     * @desc 获取指定field的用户信息
+     * @user Liu qian
+     * @time 2020/3/18 22:15
+     * @param string $field
+     * @return int
+     */
+    public function getField(string $field)
+    {
+        return 1;
+    }
+
+    /**
+     * @desc 设置查询用户的UID
+     * @user Liu qian
+     * @time 2020/3/18 22:15
+     * @param int $uid
+     * @return $this
+     */
+    public function setUid(int $uid):self
+    {
+        return $this;
+    }
+
+}
+```
+①我们在命令行中执行以下命令：
+
+```
+php think make:appFacade app\common\service\User
+```
+
+即可生成`application/common/facade/User.php`，代码如下：
+
+```
+<?php
+
+namespace app\common\facade;
+
+
+use think\Facade;
+
+/**
+ * @see \app\common\service\User
+ * @mixin \app\common\service\User
+ * @method mixed getField(string $field) static 获取指定field的用户信息
+ * @method \app\common\service\User setUid(int $uid) static 设置查询用户的UID
+ */
+class User extends Facade
+{
+    protected static function getFacadeClass()
+    {
+        return \app\common\service\User::class;
+    }
+}
+```
+
+②或者我们执行以下命令
+
+```
+php think make:appFacade app\common\service\User --path self
+```
+
+即可生成`application/common/service/facade/User.php`,代码如下：
+
+```
+<?php
+
+namespace app\common\service\facade;
+
+
+use think\Facade;
+
+/**
+ * @see \app\common\service\User
+ * @mixin \app\common\service\User
+ * @method mixed getField(string $field) static 获取指定field的用户信息
+ * @method \app\common\service\User setUid(int $uid) static 设置查询用户的UID
+ */
+class User extends Facade
+{
+    protected static function getFacadeClass()
+    {
+        return \app\common\service\User::class;
+    }
+}
+```
+
 
 > tips 近期准备写一个gitee企业版+企业微信的小项目，感兴趣的可以关注一下

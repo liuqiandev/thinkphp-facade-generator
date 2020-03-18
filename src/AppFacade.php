@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: se7en
- * Date: 2020/3/12
- * Time: 21:55
- */
 
 namespace liuqiandev\thinkphp_facade_generator;
 
@@ -27,8 +21,7 @@ class AppFacade extends Make
     {
         parent::configure();
         $this->setName('make:appFacade')
-            ->addOption('common', null, Option::VALUE_OPTIONAL, '[Default]facade class will build in common/facade path')
-            ->addOption('self', null, Option::VALUE_OPTIONAL, 'facade class will build in %self%/facade path')
+            ->addOption('path', null, Option::VALUE_OPTIONAL, '')
             ->setDescription('Create a new appFacade class');
     }
     protected function execute(Input $input, Output $output)
@@ -38,8 +31,7 @@ class AppFacade extends Make
         if(substr($this->className,0,1)==='\\'){
             $this->className = ltrim($this->className,'\\');
         };
-
-        if($input->hasOption('self')){
+        if($input->hasOption('path')&&$input->getOption('path')==='self'){
             $pathname = $this->getPathName($this->className);
             $dirname = dirname($pathname).DIRECTORY_SEPARATOR.'facade';
         }else{
@@ -86,7 +78,6 @@ class AppFacade extends Make
         }else{
             $importClass = '';
         }
-
 
         $annotation = '/**'.PHP_EOL;
         $annotation .=' * @see \\'.$this->className.PHP_EOL;
